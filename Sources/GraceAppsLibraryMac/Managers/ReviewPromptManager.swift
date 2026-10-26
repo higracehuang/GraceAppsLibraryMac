@@ -164,21 +164,27 @@ public final class ReviewPromptManager {
 
     /// App Store review page for an app, from a bare numeric ID or one
     /// already prefixed with "id".
-    public static func getReviewURL(appStoreId: String) -> URL? {
+    /// Nonisolated on purpose: this builds a URL from its argument
+    /// only, touches no manager state, and is called from
+    /// nonisolated contexts such as `GraceMacApp.reviewURL`.
+    public nonisolated static func getReviewURL(appStoreId: String) -> URL? {
         let cleanId = appStoreId.hasPrefix("id") ? appStoreId : "id\(appStoreId)"
         return URL(string: "https://apps.apple.com/app/\(cleanId)?action=write-review")
     }
 
     /// App Store page for an app, from a bare numeric ID or one
     /// already prefixed with "id".
-    public static func getShareURL(appStoreId: String) -> URL? {
+    /// Nonisolated for the same reason as `getReviewURL`.
+    public nonisolated static func getShareURL(appStoreId: String) -> URL? {
         let cleanId = appStoreId.hasPrefix("id") ? appStoreId : "id\(appStoreId)"
         return URL(string: "https://apps.apple.com/app/\(cleanId)")
     }
 
     /// Pre-filled feedback email, with app version and macOS version
     /// in the body so replies don't need a round of "which version?".
-    public static func getFeedbackMailURL() -> URL? {
+    /// Nonisolated for the same reason as `getReviewURL`: it reads
+    /// only `Bundle.main` and `ProcessInfo`, no manager state.
+    public nonisolated static func getFeedbackMailURL() -> URL? {
         let appName = Bundle.main.appName
         let appVersion = Bundle.main.releaseVersionNumber
         let appBuild = Bundle.main.buildVersionNumber
