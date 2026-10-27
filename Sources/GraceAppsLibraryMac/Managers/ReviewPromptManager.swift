@@ -41,7 +41,13 @@ public final class ReviewPromptManager {
     /// for `getReviewURL` / `getShareURL`. Set it at launch.
     public var appStoreId: String?
 
-    private let checkpointCount: Int
+    /// How many daily engagements before the prompt may fire.
+    /// Default 5. A host app may lower it at launch — FaceCam
+    /// sets it to 3, and gates the call itself until the user
+    /// has customized something, so the prompt is a delight
+    /// moment, not just a calendar date. Other apps that never
+    /// set it keep the 5-day default.
+    public var checkpointCount: Int
     private let userDefaults: UserDefaults
 
     private enum Keys {
