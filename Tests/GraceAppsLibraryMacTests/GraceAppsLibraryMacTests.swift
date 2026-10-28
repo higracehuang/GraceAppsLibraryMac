@@ -284,6 +284,65 @@ final class GraceAppsLibraryMacTests: XCTestCase {
         let emptyMenu = DebugMenuView()
         XCTAssertNotNil(emptyMenu)
     }
+
+    func testScreenshotFramework() {
+        // Standard presets
+        XCTAssertEqual(StandardMacScreenshotPreset.allCases.count, 5)
+        XCTAssertEqual(StandardMacScreenshotPreset.from(token: "1"), .slot1Benefit)
+        XCTAssertEqual(StandardMacScreenshotPreset.from(token: "benefit"), .slot1Benefit)
+        XCTAssertEqual(StandardMacScreenshotPreset.from(token: "5"), .slot5Customization)
+        XCTAssertFalse(StandardMacScreenshotPreset.slot1Benefit.suggestedFilename.isEmpty)
+
+        // Language resolution
+        XCTAssertEqual(ScreenshotLanguage.from(token: "en"), .english)
+        XCTAssertEqual(ScreenshotLanguage.from(token: "zh"), .simplifiedChinese)
+        XCTAssertEqual(ScreenshotLanguage.from(token: "zh-Hant"), .traditionalChinese)
+        XCTAssertEqual(ScreenshotLanguage.from(token: "de"), .german)
+        XCTAssertEqual(ScreenshotLanguage.from(token: "auto"), .auto)
+        XCTAssertFalse(ScreenshotLanguage.english.displayName.isEmpty)
+        XCTAssertEqual(ScreenshotLanguage.english.appleLanguageCode, "en")
+
+        // Environment parser
+        let langFromEnv = ScreenshotLanguage.fromLaunchEnvironment(
+            arguments: ["MyApp", "-SCREENSHOT_LANG", "ja"],
+            environment: [:]
+        )
+        XCTAssertEqual(langFromEnv, .japanese)
+
+        let presetFromEnv = StandardMacScreenshotPreset.fromLaunchEnvironment(
+            arguments: ["MyApp", "-SCREENSHOT_PRESET", "4"],
+            environment: [:]
+        )
+        XCTAssertEqual(presetFromEnv, .slot4Result)
+
+        // Screenshot engine
+        let engine = ScreenshotEngine<StandardMacScreenshotPreset>(
+            arguments: ["MyApp", "-SCREENSHOT_PRESET", "2", "-SCREENSHOT_LANG", "de"],
+            environment: [:]
+        )
+        XCTAssertEqual(engine.activePreset, .slot2Feature)
+        XCTAssertEqual(engine.selectedLanguage, .german)
+        XCTAssertTrue(engine.isScreenshotCaptureActive)
+
+        var didApply = false
+        engine.onApply = { _ in didApply = true }
+        engine.apply(preset: .slot3SecondFeature)
+        XCTAssertTrue(didApply)
+        XCTAssertEqual(engine.activePreset, .slot3SecondFeature)
+
+        var didReset = false
+        engine.onReset = { didReset = true }
+        engine.reset()
+        XCTAssertTrue(didReset)
+        XCTAssertNil(engine.activePreset)
+
+        // Views
+        let portraitView = MockCameraPortraitView(isMirrored: true)
+        XCTAssertNotNil(portraitView)
+
+        let debugSection = DebugScreenshotSection(engine: engine)
+        XCTAssertNotNil(debugSection)
+    }
 }
 
 private final class MockLaunchAtLoginService: LaunchAtLoginServiceProtocol {
