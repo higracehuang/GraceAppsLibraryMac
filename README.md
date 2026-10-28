@@ -19,7 +19,8 @@ compilation, no UIKit, and no iOS-only APIs.
   falls back to opening the App Store review page.
 - **Release notes** (`ReleaseNotesManager`, `ReleaseNote`,
   `ReleaseNotesView`): per-version viewed tracking, suppressed on
-  fresh installs by default.
+  fresh installs by default, with `isReturningUser` support for apps
+  adopting GALM on an upgrade.
 - **About section** (`AboutAppSectionView`): version, What's New,
   rate link, and feedback options for a Settings screen.
 - **Share Feedback & Signature** (`FeedbackToGraceView`, `DeveloperSignatureView`):

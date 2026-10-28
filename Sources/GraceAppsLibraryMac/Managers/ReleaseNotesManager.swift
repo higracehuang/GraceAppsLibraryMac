@@ -32,12 +32,26 @@ public final class ReleaseNotesManager {
 
     /// Whether the current version's notes should be shown.
     /// With no notes, or no note for the current version, never.
-    /// On a fresh install, suppressed by default so onboarding
-    /// isn't immediately followed by a changelog.
-    public func shouldShow(releaseNotes: [ReleaseNote], suppressOnFirstInstall: Bool = true) -> Bool {
+    ///
+    /// When `lastViewedVersion == nil`:
+    /// - If `isReturningUser` is `true`, the user is upgrading from a legacy version that
+    ///   predated GALM adoption. Release notes are shown for the new version.
+    /// - If `suppressOnFirstInstall` is `true` (and not a returning user), release notes are
+    ///   suppressed and marked as viewed so fresh installs see onboarding instead of a changelog.
+    ///
+    /// Once a version has been viewed previously (`lastViewedVersion != nil`), release notes
+    /// are shown whenever `lastViewed != currentVersion`.
+    public func shouldShow(
+        releaseNotes: [ReleaseNote],
+        suppressOnFirstInstall: Bool = true,
+        isReturningUser: Bool = false
+    ) -> Bool {
         guard !releaseNotes.isEmpty else { return false }
         guard releaseNotes.contains(where: { $0.version == currentVersion }) else { return false }
         guard let lastViewed = lastViewedVersion else {
+            if isReturningUser {
+                return true
+            }
             if suppressOnFirstInstall {
                 markAsViewed(version: currentVersion)
                 return false
@@ -45,6 +59,19 @@ public final class ReleaseNotesManager {
             return true
         }
         return lastViewed != currentVersion
+    }
+
+    /// Closure overload for `shouldShow(releaseNotes:suppressOnFirstInstall:isReturningUser:)`.
+    public func shouldShow(
+        releaseNotes: [ReleaseNote],
+        suppressOnFirstInstall: Bool = true,
+        isReturningUser: () -> Bool
+    ) -> Bool {
+        shouldShow(
+            releaseNotes: releaseNotes,
+            suppressOnFirstInstall: suppressOnFirstInstall,
+            isReturningUser: isReturningUser()
+        )
     }
 
     public func markCurrentVersionAsViewed() {

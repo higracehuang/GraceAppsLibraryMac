@@ -51,6 +51,41 @@ final class GraceAppsLibraryMacTests: XCTestCase {
         XCTAssertFalse(manager.isFirstInstall)
     }
 
+    func testReleaseNotesReturningUserGetsNotesOnFirstGALMAdoption() {
+        let defaults = freshDefaults()
+        let manager = ReleaseNotesManager(userDefaults: defaults)
+        let currentVersion = Bundle.main.releaseVersionNumber
+        let notes = [ReleaseNote(version: currentVersion, items: [ReleaseNoteItem(text: "New feature")])]
+
+        // When isReturningUser is false on fresh install: suppressed and marked as viewed
+        XCTAssertFalse(manager.shouldShow(releaseNotes: notes, isReturningUser: false))
+        XCTAssertEqual(manager.lastViewedVersion, currentVersion)
+
+        // Reset state for legacy user test
+        manager.resetReleaseNotesState()
+        XCTAssertNil(manager.lastViewedVersion)
+
+        // When isReturningUser is true (legacy upgrader with no GALM record): shown!
+        XCTAssertTrue(manager.shouldShow(releaseNotes: notes, isReturningUser: true))
+        // shouldShow does not mark as viewed for returning users before the view appears
+        XCTAssertNil(manager.lastViewedVersion)
+
+        // Once marked as viewed (e.g. by ReleaseNotesView.onAppear): not shown again
+        manager.markCurrentVersionAsViewed()
+        XCTAssertFalse(manager.shouldShow(releaseNotes: notes, isReturningUser: true))
+    }
+
+    func testReleaseNotesClosureOverload() {
+        let defaults = freshDefaults()
+        let manager = ReleaseNotesManager(userDefaults: defaults)
+        let currentVersion = Bundle.main.releaseVersionNumber
+        let notes = [ReleaseNote(version: currentVersion, items: [ReleaseNoteItem(text: "New feature")])]
+
+        XCTAssertTrue(manager.shouldShow(releaseNotes: notes, isReturningUser: { true }))
+        manager.resetReleaseNotesState()
+        XCTAssertFalse(manager.shouldShow(releaseNotes: notes, isReturningUser: { false }))
+    }
+
     func testReviewAppInitResetsCounterOnVersionChange() {
         let defaults = freshDefaults()
         defaults.set(42, forKey: "GraceAppsMac_Review_EngagementCounter")
