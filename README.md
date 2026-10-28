@@ -26,6 +26,10 @@ compilation, no UIKit, and no iOS-only APIs.
 - **Share Feedback & Signature** (`FeedbackToGraceView`, `DeveloperSignatureView`):
   personal feedback sheet with direct message from Grace, prefilled email button,
   clipboard copy action for webmail users, and developer photo signature.
+- **Settings framework & UI** (`SettingsSplitView`, `SettingsNavigationHistory`,
+  `FormSwitchToggleStyle`, `ProBadge`, `ProTeaserBanner`):
+  modern macOS System Settings split-view layout with forward/back history navigation,
+  fixed sidebar width, grouped form styling, full-row switch toggle style, and Pro badges.
 - **Cross-promo list** (`GraceAppsView`): the other Mac apps, each
   linking to its App Store page.
 

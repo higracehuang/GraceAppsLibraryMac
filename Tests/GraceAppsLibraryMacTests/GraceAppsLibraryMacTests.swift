@@ -123,4 +123,43 @@ final class GraceAppsLibraryMacTests: XCTestCase {
         )
         XCTAssertNotNil(fileURL, "DeveloperProfilePicture asset should exist in module bundle")
     }
+
+    func testSettingsNavigationHistory() {
+        var history = SettingsNavigationHistory(initialTab: "general")
+        XCTAssertEqual(history.current, "general")
+        XCTAssertFalse(history.canGoBack)
+        XCTAssertFalse(history.canGoForward)
+
+        history.select("appearance")
+        XCTAssertEqual(history.current, "appearance")
+        XCTAssertTrue(history.canGoBack)
+        XCTAssertFalse(history.canGoForward)
+
+        history.select("shortcuts")
+        XCTAssertEqual(history.current, "shortcuts")
+        XCTAssertTrue(history.canGoBack)
+
+        XCTAssertEqual(history.goBack(), "appearance")
+        XCTAssertTrue(history.canGoBack)
+        XCTAssertTrue(history.canGoForward)
+
+        XCTAssertEqual(history.goBack(), "general")
+        XCTAssertFalse(history.canGoBack)
+        XCTAssertTrue(history.canGoForward)
+
+        XCTAssertEqual(history.goForward(), "appearance")
+        XCTAssertTrue(history.canGoBack)
+        XCTAssertTrue(history.canGoForward)
+
+        // Selecting a new tab while in the middle clears forward history
+        history.select("about")
+        XCTAssertEqual(history.current, "about")
+        XCTAssertFalse(history.canGoForward)
+        XCTAssertTrue(history.canGoBack)
+    }
+
+    func testProBadgeRenders() {
+        let badge = ProBadge(title: "PRO")
+        XCTAssertNotNil(badge)
+    }
 }
