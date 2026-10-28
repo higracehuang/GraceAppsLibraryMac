@@ -140,6 +140,16 @@ public final class ReviewPromptManager {
         userDefaults.removeObject(forKey: Keys.lastEngagementDate)
     }
 
+    /// The current engagement count recorded in UserDefaults. For debug and tests only.
+    public var debugEngagementCount: Int {
+        userDefaults.integer(forKey: Keys.engagementCounter)
+    }
+
+    /// The last version prompted for review recorded in UserDefaults. For debug and tests only.
+    public var debugLastVersionPrompted: String? {
+        userDefaults.string(forKey: Keys.lastVersionPrompted)
+    }
+
     private func markPromptedForCurrentVersion() {
         userDefaults.set(releaseVersionNumber, forKey: Keys.lastVersionPrompted)
     }

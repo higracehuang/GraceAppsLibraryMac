@@ -1,5 +1,6 @@
 import XCTest
 import ServiceManagement
+import SwiftUI
 @testable import GraceAppsLibraryMac
 
 @MainActor
@@ -218,6 +219,70 @@ final class GraceAppsLibraryMacTests: XCTestCase {
         // Test SwiftUI view init
         let toggleView = LaunchAtLoginToggle("Launch when starting Mac", manager: manager)
         XCTAssertNotNil(toggleView)
+    }
+
+    func testDebugSectionsAndMenuView() {
+        // Test ReviewPrompt diagnostic properties
+        ReviewPromptManager.shared.debugResetReviewState()
+        XCTAssertEqual(ReviewPromptManager.shared.debugEngagementCount, 0)
+        XCTAssertNil(ReviewPromptManager.shared.debugLastVersionPrompted)
+
+        let reviewSection = DebugReviewPromptSection()
+        XCTAssertNotNil(reviewSection)
+
+        let notesSection = DebugReleaseNotesSection(
+            releaseNotes: [ReleaseNote(version: "1.0.0", items: [ReleaseNoteItem(text: "Test")])],
+            isPaidUser: true
+        )
+        XCTAssertNotNil(notesSection)
+
+        var didCallResetApp = false
+        let resetSection = DebugResetSection {
+            didCallResetApp = true
+        }
+        XCTAssertNotNil(resetSection)
+        resetSection.onResetAppDefaults?()
+        XCTAssertTrue(didCallResetApp)
+
+        var didCallPaywall = false
+        var didCallOnboarding = false
+        var didCallReleaseNotes = false
+        var didCallFeedback = false
+        var didCallReviewPrompt = false
+
+        let flowsSection = DebugFlowsSection(
+            presentPaywall: { didCallPaywall = true },
+            presentOnboarding: { didCallOnboarding = true },
+            presentReleaseNotes: { didCallReleaseNotes = true },
+            presentFeedback: { didCallFeedback = true },
+            presentReviewPrompt: { didCallReviewPrompt = true }
+        )
+        XCTAssertNotNil(flowsSection)
+
+        flowsSection.presentPaywall?()
+        flowsSection.presentOnboarding?()
+        flowsSection.presentReleaseNotes?()
+        flowsSection.presentFeedback?()
+        flowsSection.presentReviewPrompt?()
+
+        XCTAssertTrue(didCallPaywall)
+        XCTAssertTrue(didCallOnboarding)
+        XCTAssertTrue(didCallReleaseNotes)
+        XCTAssertTrue(didCallFeedback)
+        XCTAssertTrue(didCallReviewPrompt)
+
+        // Test combined DebugMenuView
+        let debugMenu = DebugMenuView(
+            releaseNotes: [ReleaseNote(version: "1.0.0", items: [])],
+            presentPaywall: { },
+            onResetAppDefaults: { }
+        ) {
+            Text("Custom App Section")
+        }
+        XCTAssertNotNil(debugMenu)
+
+        let emptyMenu = DebugMenuView()
+        XCTAssertNotNil(emptyMenu)
     }
 }
 
