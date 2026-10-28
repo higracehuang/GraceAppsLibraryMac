@@ -343,6 +343,45 @@ final class GraceAppsLibraryMacTests: XCTestCase {
         let debugSection = DebugScreenshotSection(engine: engine)
         XCTAssertNotNil(debugSection)
     }
+
+    func testColorHexExtensions() {
+        // Valid 6-char parsing
+        let red = Color(hex: "#FF0000")
+        XCTAssertNotNil(red)
+        XCTAssertEqual(red?.toHex(), "#FF0000")
+
+        let green = Color(hex: "00ff00")
+        XCTAssertNotNil(green)
+        XCTAssertEqual(green?.toHex(), "#00FF00")
+
+        let blue = Color(hex: "  #0000FF \n")
+        XCTAssertNotNil(blue)
+        XCTAssertEqual(blue?.toHex(), "#0000FF")
+
+        let peach = Color(hex: "#FFF2D9")
+        XCTAssertNotNil(peach)
+        XCTAssertEqual(peach?.toHex(), "#FFF2D9")
+
+        // Invalid strings
+        XCTAssertNil(Color(hex: ""))
+        XCTAssertNil(Color(hex: "#FFF"))
+        XCTAssertNil(Color(hex: "#GGGGGG"))
+        XCTAssertNil(Color(hex: "#FFFFFFFF")) // Default includeAlpha is false
+
+        // Alpha support
+        let semiRed = Color(hex: "#FF000080", includeAlpha: true)
+        XCTAssertNotNil(semiRed)
+        XCTAssertEqual(semiRed?.toHex(includeAlpha: true), "#FF000080")
+
+        // NSColor
+        let nsBlue = NSColor(hex: "#0000FF")
+        XCTAssertNotNil(nsBlue)
+        XCTAssertEqual(nsBlue?.toHex(), "#0000FF")
+
+        let nsSemi = NSColor(hex: "#00FF0080", includeAlpha: true)
+        XCTAssertNotNil(nsSemi)
+        XCTAssertEqual(nsSemi?.toHex(includeAlpha: true), "#00FF0080")
+    }
 }
 
 private final class MockLaunchAtLoginService: LaunchAtLoginServiceProtocol {
