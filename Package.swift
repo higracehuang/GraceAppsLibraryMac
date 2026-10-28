@@ -18,7 +18,11 @@ let package = Package(
     targets: [
         .target(
             name: "GraceAppsLibraryMac",
-            dependencies: []),
+            dependencies: [],
+            resources: [
+                .process("Resources")
+            ]
+        ),
         .testTarget(
             name: "GraceAppsLibraryMacTests",
             dependencies: ["GraceAppsLibraryMac"]),

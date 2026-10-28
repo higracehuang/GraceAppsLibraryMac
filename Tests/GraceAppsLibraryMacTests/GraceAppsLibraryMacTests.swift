@@ -1,6 +1,7 @@
 import XCTest
 @testable import GraceAppsLibraryMac
 
+@MainActor
 final class GraceAppsLibraryMacTests: XCTestCase {
     private func freshDefaults() -> UserDefaults {
         let defaults = UserDefaults(suiteName: UUID().uuidString)!
@@ -65,5 +66,26 @@ final class GraceAppsLibraryMacTests: XCTestCase {
     func testReviewManagerHasNotPromptedByDefault() {
         let manager = ReviewPromptManager(userDefaults: freshDefaults())
         XCTAssertFalse(manager.hasPromptYet())
+    }
+
+    func testFeedbackToGraceViewDefaultsAndURL() {
+        XCTAssertEqual(FeedbackToGraceView.feedbackEmail, "higracehuang@gmail.com")
+        XCTAssertFalse(FeedbackToGraceView.feedbackMessage.isEmpty)
+        XCTAssertFalse(FeedbackToGraceView.feedbackAppreciation.isEmpty)
+        XCTAssertEqual(FeedbackToGraceView.feedbackSignature, "Grace")
+
+        let view = FeedbackToGraceView()
+        XCTAssertEqual(view.feedbackURL.scheme, "mailto")
+        XCTAssertTrue(view.feedbackURL.absoluteString.contains("higracehuang@gmail.com"))
+        XCTAssertEqual(view.effectiveEmail, "higracehuang@gmail.com")
+    }
+
+    func testDeveloperProfilePictureAssetExistsInModule() {
+        let fileURL = Bundle.module.url(
+            forResource: "grace Small",
+            withExtension: "jpeg",
+            subdirectory: "Assets.xcassets/DeveloperProfilePicture.imageset"
+        )
+        XCTAssertNotNil(fileURL, "DeveloperProfilePicture asset should exist in module bundle")
     }
 }

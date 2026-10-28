@@ -21,7 +21,10 @@ compilation, no UIKit, and no iOS-only APIs.
   `ReleaseNotesView`): per-version viewed tracking, suppressed on
   fresh installs by default.
 - **About section** (`AboutAppSectionView`): version, What's New,
-  rate link, and feedback email for a Settings screen.
+  rate link, and feedback options for a Settings screen.
+- **Share Feedback & Signature** (`FeedbackToGraceView`, `DeveloperSignatureView`):
+  personal feedback sheet with direct message from Grace, prefilled email button,
+  clipboard copy action for webmail users, and developer photo signature.
 - **Cross-promo list** (`GraceAppsView`): the other Mac apps, each
   linking to its App Store page.
 
