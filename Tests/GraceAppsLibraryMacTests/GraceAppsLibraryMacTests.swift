@@ -1,4 +1,5 @@
 import XCTest
+import ServiceManagement
 @testable import GraceAppsLibraryMac
 
 @MainActor
@@ -161,5 +162,86 @@ final class GraceAppsLibraryMacTests: XCTestCase {
     func testProBadgeRenders() {
         let badge = ProBadge(title: "PRO")
         XCTAssertNotNil(badge)
+    }
+
+    func testLaunchAtLoginManagerLifecycle() throws {
+        let mock = MockLaunchAtLoginService()
+        mock.status = .notRegistered
+
+        let manager = LaunchAtLoginManager(service: mock)
+        XCTAssertFalse(manager.isEnabled)
+        XCTAssertEqual(manager.status, .notRegistered)
+        XCTAssertFalse(manager.requiresApproval)
+
+        // Test register
+        let success = try manager.register()
+        XCTAssertTrue(success)
+        XCTAssertTrue(manager.isEnabled)
+        XCTAssertEqual(manager.status, .enabled)
+
+        // Test unregister
+        let unregisterSuccess = try manager.unregister()
+        XCTAssertFalse(unregisterSuccess)
+        XCTAssertFalse(manager.isEnabled)
+        XCTAssertEqual(manager.status, .notRegistered)
+
+        // Test setEnabled
+        XCTAssertTrue(manager.setEnabled(true))
+        XCTAssertTrue(manager.isEnabled)
+        XCTAssertTrue(manager.setEnabled(false))
+        XCTAssertFalse(manager.isEnabled)
+
+        // Test failure handling
+        mock.shouldFailRegister = true
+        XCTAssertFalse(manager.setEnabled(true))
+        XCTAssertFalse(manager.isEnabled)
+        XCTAssertNotNil(manager.lastError)
+
+        // Test binding
+        mock.shouldFailRegister = false
+        let binding = manager.binding
+        binding.wrappedValue = true
+        XCTAssertTrue(manager.isEnabled)
+        binding.wrappedValue = false
+        XCTAssertFalse(manager.isEnabled)
+
+        // Test approval required
+        mock.status = .requiresApproval
+        manager.refresh()
+        XCTAssertTrue(manager.requiresApproval)
+        XCTAssertFalse(manager.isEnabled)
+
+        // Test open system settings
+        manager.openSystemSettings()
+        XCTAssertEqual(mock.openedSystemSettingsCount, 1)
+
+        // Test SwiftUI view init
+        let toggleView = LaunchAtLoginToggle("Launch when starting Mac", manager: manager)
+        XCTAssertNotNil(toggleView)
+    }
+}
+
+private final class MockLaunchAtLoginService: LaunchAtLoginServiceProtocol {
+    var status: ServiceManagement.SMAppService.Status = .notRegistered
+    var shouldFailRegister = false
+    var shouldFailUnregister = false
+    var openedSystemSettingsCount = 0
+
+    func register() throws {
+        if shouldFailRegister {
+            throw NSError(domain: "test.launchAtLogin", code: 1, userInfo: nil)
+        }
+        status = .enabled
+    }
+
+    func unregister() throws {
+        if shouldFailUnregister {
+            throw NSError(domain: "test.launchAtLogin", code: 2, userInfo: nil)
+        }
+        status = .notRegistered
+    }
+
+    func openSystemSettingsLoginItems() {
+        openedSystemSettingsCount += 1
     }
 }
