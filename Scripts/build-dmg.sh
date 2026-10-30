@@ -24,6 +24,17 @@ OUTPUT_DIR=""
 
 while [[ $# -gt 0 ]]; do
   case "$1" in
+    -h|--help)
+      echo "Usage: build-dmg.sh [options]"
+      echo "  --project <path>            Path to .xcodeproj"
+      echo "  --scheme <scheme>           Build scheme (e.g. 'FaceCam Direct')"
+      echo "  --config <config>           Build configuration (e.g. 'Direct Release')"
+      echo "  --app-name <name>           Output app bundle name (e.g. 'FaceCam')"
+      echo "  --output-dir <path>         Output directory for .dmg (default: build-dmg)"
+      echo "  --notarize                  Submit DMG to Apple notary service and staple"
+      echo "  --keychain-profile <name>   notarytool keychain profile (default: 'notarytool-profile')"
+      exit 0
+      ;;
     --notarize)
       NOTARIZE=1
       shift
