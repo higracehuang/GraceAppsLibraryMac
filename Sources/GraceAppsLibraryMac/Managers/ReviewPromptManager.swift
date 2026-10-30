@@ -36,10 +36,33 @@ import StoreKit
 public final class ReviewPromptManager {
     public static let shared = ReviewPromptManager()
 
+    /// The distribution channel for the app. Defaults to `.appStore(id: "")` unless `DIRECT_DISTRIBUTION` is active.
+    public var channel: DistributionChannel = {
+        #if DIRECT_DISTRIBUTION
+        return .direct()
+        #else
+        return .appStore(id: "")
+        #endif
+    }() {
+        didSet {
+            _appStoreId = channel.appStoreId
+        }
+    }
+
+    private var _appStoreId: String?
+
     /// The host app's numeric App Store ID, without the "id" prefix.
     /// Used for the macOS 13 fallback (opening the review page) and
-    /// for `getReviewURL` / `getShareURL`. Set it at launch.
-    public var appStoreId: String?
+    /// for `getReviewURL` / `getShareURL`. Setting this also updates `channel` to `.appStore(id:)`.
+    public var appStoreId: String? {
+        get { channel.appStoreId ?? _appStoreId }
+        set {
+            _appStoreId = newValue
+            if let newValue {
+                channel = .appStore(id: newValue)
+            }
+        }
+    }
 
     /// How many daily engagements before the prompt may fire.
     /// Default 5. A host app may lower it at launch — FaceCam
@@ -88,6 +111,10 @@ public final class ReviewPromptManager {
 
     private func shouldPrompt() -> Bool {
         guard !ReleaseNotesManager.hasShownReleaseNotesThisSession else { return false }
+        // In direct distribution without a custom review/feedback URL, suppress automated store review prompts
+        if case .direct(let url) = channel, url == nil {
+            return false
+        }
         let count = recordEngagement()
         return count >= checkpointCount && !hasPromptYet()
     }
@@ -171,10 +198,17 @@ public final class ReviewPromptManager {
 
     private func showNativeReviewPrompt() {
         markPromptedForCurrentVersion()
-        if #available(macOS 14, *) {
-            SKStoreReviewController.requestReview()
-        } else if let appStoreId, let url = Self.getReviewURL(appStoreId: appStoreId) {
-            NSWorkspace.shared.open(url)
+        switch channel {
+        case .direct(let url):
+            if let url {
+                NSWorkspace.shared.open(url)
+            }
+        case .appStore(let id):
+            if #available(macOS 14, *) {
+                SKStoreReviewController.requestReview()
+            } else if !id.isEmpty, let url = Self.getReviewURL(appStoreId: id) {
+                NSWorkspace.shared.open(url)
+            }
         }
     }
 

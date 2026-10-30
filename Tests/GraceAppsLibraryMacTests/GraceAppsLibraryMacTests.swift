@@ -382,6 +382,69 @@ final class GraceAppsLibraryMacTests: XCTestCase {
         XCTAssertNotNil(nsSemi)
         XCTAssertEqual(nsSemi?.toHex(includeAlpha: true), "#00FF0080")
     }
+
+    func testDistributionChannelProperties() {
+        let store = DistributionChannel.appStore(id: "6476702155")
+        XCTAssertTrue(store.isAppStore)
+        XCTAssertFalse(store.isDirect)
+        XCTAssertEqual(store.appStoreId, "6476702155")
+
+        let direct = DistributionChannel.direct()
+        XCTAssertTrue(direct.isDirect)
+        XCTAssertFalse(direct.isAppStore)
+        XCTAssertNil(direct.appStoreId)
+
+        let customURL = URL(string: "https://gumroad.com/feedback")!
+        let directWithURL = DistributionChannel.direct(reviewOrFeedbackURL: customURL)
+        XCTAssertTrue(directWithURL.isDirect)
+        XCTAssertFalse(directWithURL.isAppStore)
+        XCTAssertNil(directWithURL.appStoreId)
+
+        let currentChannel = DistributionChannel.current(appStoreId: "6476702155", directURL: customURL)
+        #if DIRECT_DISTRIBUTION
+        XCTAssertTrue(currentChannel.isDirect)
+        #else
+        XCTAssertTrue(currentChannel.isAppStore)
+        XCTAssertEqual(currentChannel.appStoreId, "6476702155")
+        #endif
+    }
+
+    func testReviewPromptManagerChannelBehavior() {
+        let manager = ReviewPromptManager(checkpointCount: 1, userDefaults: freshDefaults())
+
+        // App Store channel setup
+        manager.appStoreId = "6476702155"
+        XCTAssertEqual(manager.channel, .appStore(id: "6476702155"))
+        XCTAssertEqual(manager.appStoreId, "6476702155")
+
+        // Switch to direct channel with no feedback URL
+        manager.channel = .direct(reviewOrFeedbackURL: nil)
+        XCTAssertTrue(manager.channel.isDirect)
+        XCTAssertNil(manager.appStoreId)
+
+        // In direct mode without a review/feedback URL, prompts are suppressed
+        XCTAssertFalse(manager.requestReviewIfNecessary())
+        XCTAssertEqual(manager.debugEngagementCount, 0)
+    }
+
+    func testAboutAppSectionViewInitialization() {
+        let viewAppStore = AboutAppSectionView(appStoreId: "6476702155")
+        XCTAssertNotNil(viewAppStore)
+
+        let viewDirect = AboutAppSectionView(channel: .direct())
+        XCTAssertNotNil(viewDirect)
+
+        let viewDirectWithURL = AboutAppSectionView(channel: .direct(reviewOrFeedbackURL: URL(string: "https://example.com/feedback")))
+        XCTAssertNotNil(viewDirectWithURL)
+    }
+
+    func testFullVersionStatusView() {
+        let defaultView = FullVersionStatusView()
+        XCTAssertNotNil(defaultView)
+
+        let customView = FullVersionStatusView(title: "Lifetime License", description: "All features unlocked.")
+        XCTAssertNotNil(customView)
+    }
 }
 
 private final class MockLaunchAtLoginService: LaunchAtLoginServiceProtocol {

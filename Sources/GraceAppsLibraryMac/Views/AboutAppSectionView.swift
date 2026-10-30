@@ -6,7 +6,7 @@ import SwiftUI
 /// host app wants a CTA on its release notes, and the view handles
 /// hiding it for paid users via `isPaidUser`.
 public struct AboutAppSectionView: View {
-    private let appStoreId: String
+    private let channel: DistributionChannel
     private let releaseNotes: [ReleaseNote]
     private let isPaidUser: Bool
     private let presentsFeedbackSheet: Bool
@@ -15,15 +15,29 @@ public struct AboutAppSectionView: View {
     @State private var showingFeedbackSheet = false
 
     public init(
+        channel: DistributionChannel,
+        releaseNotes: [ReleaseNote] = [],
+        isPaidUser: Bool = false,
+        presentsFeedbackSheet: Bool = false
+    ) {
+        self.channel = channel
+        self.releaseNotes = releaseNotes
+        self.isPaidUser = isPaidUser
+        self.presentsFeedbackSheet = presentsFeedbackSheet
+    }
+
+    public init(
         appStoreId: String,
         releaseNotes: [ReleaseNote] = [],
         isPaidUser: Bool = false,
         presentsFeedbackSheet: Bool = false
     ) {
-        self.appStoreId = appStoreId
-        self.releaseNotes = releaseNotes
-        self.isPaidUser = isPaidUser
-        self.presentsFeedbackSheet = presentsFeedbackSheet
+        self.init(
+            channel: .appStore(id: appStoreId),
+            releaseNotes: releaseNotes,
+            isPaidUser: isPaidUser,
+            presentsFeedbackSheet: presentsFeedbackSheet
+        )
     }
 
     public var body: some View {
@@ -34,8 +48,15 @@ public struct AboutAppSectionView: View {
                     showingReleaseNotes = true
                 }
             }
-            if let reviewURL = ReviewPromptManager.getReviewURL(appStoreId: appStoreId) {
-                Link("Rate on the App Store", destination: reviewURL)
+            switch channel {
+            case .appStore(let id):
+                if !id.isEmpty, let reviewURL = ReviewPromptManager.getReviewURL(appStoreId: id) {
+                    Link("Rate on the App Store", destination: reviewURL)
+                }
+            case .direct(let url):
+                if let url {
+                    Link("Rate or Review", destination: url)
+                }
             }
             if presentsFeedbackSheet {
                 Button("Share Feedback…") {

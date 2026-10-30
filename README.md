@@ -32,6 +32,14 @@ compilation, no UIKit, and no iOS-only APIs.
   fixed sidebar width, grouped form styling, full-row switch toggle style, and Pro badges.
 - **Cross-promo list** (`GraceAppsView`): the other Mac apps, each
   linking to its App Store page.
+- **Distribution Channels** (`DistributionChannel`): unify App Store and direct distribution
+  (e.g. Gumroad, website DMG, GitHub Releases). Automatically switchable via
+  the `DIRECT_DISTRIBUTION` compilation condition.
+- **Full Version Status UI** (`FullVersionStatusView`): ready-made status card indicating
+  that Pro features are permanently unlocked in direct releases.
+- **Direct Distribution Tooling & Guide** (`Scripts/build-dmg.sh`, `Docs/DirectDistributionGuide.md`):
+  turnkey script and comprehensive documentation to strip debug symbols, build minimal-size DMGs,
+  Developer ID sign, notarize via CLI `notarytool`, and staple for non-App Store releases.
 
 ## What it deliberately does not do
 
@@ -97,6 +105,22 @@ Other Mac apps, excluding the host app:
 
 ```swift
 GraceAppsView(excludingAppStoreId: "6476702155")
+```
+
+Direct Distribution Setup:
+
+```swift
+// Check distribution channel and adapt review / feedback logic
+let channel = DistributionChannel.current(
+    appStoreId: "6476702155",
+    directURL: URL(string: "https://gumroad.com/l/myproduct")
+)
+ReviewPromptManager.shared.channel = channel
+
+// In your Settings Form for direct release:
+#if DIRECT_DISTRIBUTION
+FullVersionStatusView()
+#endif
 ```
 
 ## Migrating off SolicitReviewLibrary
