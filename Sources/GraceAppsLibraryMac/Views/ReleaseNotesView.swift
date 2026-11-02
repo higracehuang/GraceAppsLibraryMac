@@ -15,7 +15,7 @@ public struct ReleaseNotesView: View {
 
     public var body: some View {
         VStack(alignment: .leading, spacing: 16) {
-            Text("What's New")
+            Text(String(localized: "What's New", bundle: .module))
                 .font(.largeTitle)
             ScrollView {
                 VStack(alignment: .leading, spacing: 20) {
@@ -41,7 +41,7 @@ public struct ReleaseNotesView: View {
                 }
                 .frame(maxWidth: .infinity, alignment: .leading)
             }
-            Button("Done") {
+            Button(String(localized: "Done", bundle: .module)) {
                 dismiss()
             }
             .keyboardShortcut(.defaultAction)

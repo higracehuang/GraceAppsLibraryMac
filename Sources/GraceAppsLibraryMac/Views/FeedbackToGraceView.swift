@@ -7,8 +7,12 @@ import AppKit
 /// clipboard copy helper for webmail users, appreciation note, and `DeveloperSignatureView`.
 public struct FeedbackToGraceView: View {
     public static var feedbackEmail: String = "higracehuang@gmail.com"
-    public static var feedbackMessage: String = "I'd love to hear your honest thoughts! Whether it's a feature idea, a bug, or just telling me what's working (and what isn't)—your feedback helps me improve. Please write to me at:"
-    public static var feedbackAppreciation: String = "Thank you for helping me improve! ❤️"
+    public static var feedbackMessage: String {
+        NSLocalizedString("feedback.message", bundle: .module, comment: "")
+    }
+    public static var feedbackAppreciation: String {
+        NSLocalizedString("feedback.appreciation", bundle: .module, comment: "")
+    }
     public static var feedbackSignature: String = "Grace"
 
     @Environment(\.dismiss) private var dismiss
@@ -56,10 +60,10 @@ public struct FeedbackToGraceView: View {
         VStack(spacing: 0) {
             // Sheet header bar matching macOS sheets ("Share Feedback" + "Done")
             HStack {
-                Text("Share Feedback")
+                Text(String(localized: "Share Feedback", bundle: .module))
                     .font(.headline)
                 Spacer()
-                Button("Done") {
+                Button(String(localized: "Done", bundle: .module)) {
                     dismiss()
                 }
                 .keyboardShortcut(.cancelAction)
@@ -100,7 +104,7 @@ public struct FeedbackToGraceView: View {
                                 copiedEmail = true
                             } label: {
                                 Label(
-                                    copiedEmail ? "Copied to Clipboard" : "Copy Email Address",
+                                    copiedEmail ? String(localized: "Copied to Clipboard", bundle: .module) : String(localized: "Copy Email Address", bundle: .module),
                                     systemImage: copiedEmail ? "checkmark.circle.fill" : "doc.on.doc"
                                 )
                                 .font(.caption)

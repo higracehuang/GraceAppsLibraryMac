@@ -41,29 +41,29 @@ public struct AboutAppSectionView: View {
     }
 
     public var body: some View {
-        Section("About") {
-            LabeledContent("Version", value: Bundle.main.displayVersionString)
+        Section(String(localized: "About", bundle: .module)) {
+            LabeledContent(String(localized: "Version", bundle: .module), value: Bundle.main.displayVersionString)
             if !releaseNotes.isEmpty {
-                Button("What's New") {
+                Button(String(localized: "What's New", bundle: .module)) {
                     showingReleaseNotes = true
                 }
             }
             switch channel {
             case .appStore(let id):
                 if !id.isEmpty, let reviewURL = ReviewPromptManager.getReviewURL(appStoreId: id) {
-                    Link("Rate on the App Store", destination: reviewURL)
+                    Link(String(localized: "Rate on the App Store", bundle: .module), destination: reviewURL)
                 }
             case .direct(let url):
                 if let url {
-                    Link("Rate or Review", destination: url)
+                    Link(String(localized: "Rate or Review", bundle: .module), destination: url)
                 }
             }
             if presentsFeedbackSheet {
-                Button("Share Feedback…") {
+                Button(String(localized: "Share Feedback…", bundle: .module)) {
                     showingFeedbackSheet = true
                 }
             } else if let feedbackURL = ReviewPromptManager.getFeedbackMailURL() {
-                Link("Send Feedback", destination: feedbackURL)
+                Link(String(localized: "Send Feedback", bundle: .module), destination: feedbackURL)
             }
         }
         .sheet(isPresented: $showingReleaseNotes) {

@@ -1,0 +1,46 @@
+/* Review Prompts */
+"Are you enjoying %@?" = "您喜欢使用 %@ 吗？";
+"Please let us know what you think!" = "请告诉我们您的想法！";
+"Love it!" = "很喜欢！";
+"Not really" = "不太喜欢";
+"Help Us Improve" = "帮助我们改进";
+"Would you like to send feedback or report an issue directly to the developer?" = "您是否愿意直接向开发者反馈意见或报告问题？";
+"Send Feedback" = "发送反馈";
+"Not Now" = "暂不";
+
+/* About Section */
+"About" = "关于";
+"Version" = "版本";
+"What's New" = "更新内容";
+"Rate on the App Store" = "前往 App Store 评分";
+"Rate or Review" = "前往评分或评价";
+"Share Feedback…" = "分享反馈…";
+
+/* Release Notes */
+"Done" = "完成";
+
+/* Feedback Sheet */
+"Share Feedback" = "分享反馈";
+"Send Email" = "发送邮件";
+"Copy Email Address" = "复制邮箱地址";
+"Copied to Clipboard" = "已复制到剪贴板";
+"feedback.message" = "我很想听听你的真实想法！无论是功能建议、问题反馈，还是告诉我哪些地方好用（或不好用）——你的反馈都能帮我做得更好。请致信：";
+"feedback.appreciation" = "感谢你帮助我做得更好！❤️";
+
+/* Launch at Login */
+"Launch at Login" = "开机自动启动";
+"Open Settings…" = "打开“设置”…";
+"Requires approval in System Settings." = "需要在“系统设置”中批准。";
+
+/* Pro & Direct */
+"Full Version Active" = "完整版已激活";
+"All features unlocked." = "已解锁全部功能。";
+"Direct Edition" = "直接分发版";
+"Full version unlocked for direct distribution." = "直接分发版本已完整激活。";
+"PRO" = "专业版";
+
+/* App Catalog */
+"Your face, floating over any recording." = "画中画悬浮相机，让你的面孔出现在任意屏幕录制画面之上。";
+"Resize images quickly, in batches." = "快速批量调整图片尺寸与格式转换。";
+"Redact text in images before sharing." = "分享图片前一键涂抹并隐藏敏感文本信息。";
+"Convert images between color spaces." = "在不同颜色空间之间精准转换图片色彩。";

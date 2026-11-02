@@ -38,36 +38,38 @@ public struct GraceMacApp: Hashable, Identifiable {
     }
 
     /// All of Grace's macOS apps.
-    public static let all: [GraceMacApp] = [
-        GraceMacApp(
-            name: "FaceCam",
-            shortDescription: "Your face, floating over any recording.",
-            appStoreId: "6476702155",
-            bundleId: "com.deelightfullabs.FloatingCamera",
-            category: "Photo & Video"
-        ),
-        GraceMacApp(
-            name: "ResizeGenius",
-            shortDescription: "Resize images quickly, in batches.",
-            appStoreId: "6463165079",
-            bundleId: "com.deelightfullabs.ImageResizePro",
-            category: "Productivity"
-        ),
-        GraceMacApp(
-            name: "RedacApp",
-            shortDescription: "Redact text in images before sharing.",
-            appStoreId: "6443662043",
-            bundleId: "com.deelightfullabs.Redacted",
-            category: "Productivity"
-        ),
-        GraceMacApp(
-            name: "RGB Exporter",
-            shortDescription: "Convert images between color spaces.",
-            appStoreId: "6756548374",
-            bundleId: "com.deelightfullabs.PhotoColorSpace",
-            category: "Graphics & Design"
-        ),
-    ]
+    public static var all: [GraceMacApp] {
+        [
+            GraceMacApp(
+                name: "FaceCam",
+                shortDescription: String(localized: "Your face, floating over any recording.", bundle: .module),
+                appStoreId: "6476702155",
+                bundleId: "com.deelightfullabs.FloatingCamera",
+                category: "Photo & Video"
+            ),
+            GraceMacApp(
+                name: "ResizeGenius",
+                shortDescription: String(localized: "Resize images quickly, in batches.", bundle: .module),
+                appStoreId: "6463165079",
+                bundleId: "com.deelightfullabs.ImageResizePro",
+                category: "Productivity"
+            ),
+            GraceMacApp(
+                name: "RedacApp",
+                shortDescription: String(localized: "Redact text in images before sharing.", bundle: .module),
+                appStoreId: "6443662043",
+                bundleId: "com.deelightfullabs.Redacted",
+                category: "Productivity"
+            ),
+            GraceMacApp(
+                name: "RGB Exporter",
+                shortDescription: String(localized: "Convert images between color spaces.", bundle: .module),
+                appStoreId: "6756548374",
+                bundleId: "com.deelightfullabs.PhotoColorSpace",
+                category: "Graphics & Design"
+            ),
+        ]
+    }
 
     /// All Mac apps except the one with the given App Store ID
     /// (use the host app's own ID to exclude it from cross-promo).

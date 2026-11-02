@@ -6,11 +6,11 @@ public struct FullVersionStatusView: View {
     private let description: String
 
     public init(
-        title: String = "Full Version Active",
-        description: String = "All features are unlocked. Thank you for your support!"
+        title: String? = nil,
+        description: String? = nil
     ) {
-        self.title = title
-        self.description = description
+        self.title = title ?? String(localized: "Full Version Active", bundle: .module)
+        self.description = description ?? String(localized: "All features unlocked.", bundle: .module)
     }
 
     public var body: some View {

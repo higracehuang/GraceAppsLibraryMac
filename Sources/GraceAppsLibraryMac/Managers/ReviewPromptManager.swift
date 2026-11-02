@@ -184,10 +184,11 @@ public final class ReviewPromptManager {
     private func askForReview(onPositive: @escaping () -> Void, onNegative: (() -> Void)?) {
         markPromptedForCurrentVersion()
         let alert = NSAlert()
-        alert.messageText = "Are you enjoying \(appName)?"
-        alert.informativeText = "Please let us know what you think!"
-        alert.addButton(withTitle: "Love it!")
-        alert.addButton(withTitle: "Not really")
+        let format = String(localized: "Are you enjoying %@?", bundle: .module)
+        alert.messageText = String(format: format, appName)
+        alert.informativeText = String(localized: "Please let us know what you think!", bundle: .module)
+        alert.addButton(withTitle: String(localized: "Love it!", bundle: .module))
+        alert.addButton(withTitle: String(localized: "Not really", bundle: .module))
         alert.buttons.first?.keyEquivalent = "\r"
         if alert.runModal() == .alertFirstButtonReturn {
             onPositive()
@@ -204,16 +205,16 @@ public final class ReviewPromptManager {
     /// and opens their default email client with a pre-filled feedback template if confirmed.
     @discardableResult
     public static func promptFeedbackAlert(
-        title: String = "Help Us Improve",
-        message: String = "Would you like to send feedback or report an issue directly to the developer?",
-        sendButtonTitle: String = "Send Feedback",
-        cancelButtonTitle: String = "Not Now"
+        title: String? = nil,
+        message: String? = nil,
+        sendButtonTitle: String? = nil,
+        cancelButtonTitle: String? = nil
     ) -> Bool {
         let alert = NSAlert()
-        alert.messageText = title
-        alert.informativeText = message
-        alert.addButton(withTitle: sendButtonTitle)
-        alert.addButton(withTitle: cancelButtonTitle)
+        alert.messageText = title ?? String(localized: "Help Us Improve", bundle: .module)
+        alert.informativeText = message ?? String(localized: "Would you like to send feedback or report an issue directly to the developer?", bundle: .module)
+        alert.addButton(withTitle: sendButtonTitle ?? String(localized: "Send Feedback", bundle: .module))
+        alert.addButton(withTitle: cancelButtonTitle ?? String(localized: "Not Now", bundle: .module))
         if alert.runModal() == .alertFirstButtonReturn {
             if let url = getFeedbackMailURL() {
                 NSWorkspace.shared.open(url)

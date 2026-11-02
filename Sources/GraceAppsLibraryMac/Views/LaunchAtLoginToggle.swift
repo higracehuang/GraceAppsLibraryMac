@@ -42,10 +42,10 @@ public struct LaunchAtLoginToggle<Label: View>: View {
                 HStack(spacing: 4) {
                     Image(systemName: "exclamationmark.triangle.fill")
                         .foregroundColor(.yellow)
-                    Text("Requires approval in System Settings.")
+                    Text(String(localized: "Requires approval in System Settings.", bundle: .module))
                         .font(.caption)
                         .foregroundColor(.secondary)
-                    Button("Open Settings…") {
+                    Button(String(localized: "Open Settings…", bundle: .module)) {
                         manager.openSystemSettings()
                     }
                     .font(.caption)

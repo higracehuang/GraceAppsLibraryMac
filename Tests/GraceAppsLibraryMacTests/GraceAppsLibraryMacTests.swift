@@ -105,6 +105,22 @@ final class GraceAppsLibraryMacTests: XCTestCase {
         XCTAssertFalse(manager.hasPromptYet())
     }
 
+    func testChineseLocalizationInModule() {
+        guard let path = Bundle.module.path(forResource: "zh-hans", ofType: "lproj")
+                ?? Bundle.module.path(forResource: "zh-Hans", ofType: "lproj"),
+              let zhBundle = Bundle(path: path) else {
+            XCTFail("zh-Hans.lproj or zh-hans.lproj should exist in Bundle.module")
+            return
+        }
+
+        XCTAssertEqual(zhBundle.localizedString(forKey: "What's New", value: nil, table: nil), "更新内容")
+        XCTAssertEqual(zhBundle.localizedString(forKey: "Help Us Improve", value: nil, table: nil), "帮助我们改进")
+        XCTAssertEqual(zhBundle.localizedString(forKey: "Love it!", value: nil, table: nil), "很喜欢！")
+        XCTAssertEqual(zhBundle.localizedString(forKey: "Not really", value: nil, table: nil), "不太喜欢")
+        XCTAssertEqual(zhBundle.localizedString(forKey: "About", value: nil, table: nil), "关于")
+        XCTAssertEqual(zhBundle.localizedString(forKey: "Done", value: nil, table: nil), "完成")
+    }
+
     func testReviewManagerFeedbackURL() {
         guard let url = ReviewPromptManager.getFeedbackMailURL() else {
             XCTFail("getFeedbackMailURL should return a valid URL")
