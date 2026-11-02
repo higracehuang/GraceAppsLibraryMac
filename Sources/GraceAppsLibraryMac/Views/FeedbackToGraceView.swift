@@ -8,10 +8,10 @@ import AppKit
 public struct FeedbackToGraceView: View {
     public static var feedbackEmail: String = "higracehuang@gmail.com"
     public static var feedbackMessage: String {
-        NSLocalizedString("feedback.message", bundle: .module, comment: "")
+        String(localized: "I'd love to hear your honest thoughts! Whether it's a feature idea, a bug, or just telling me what's working (and what isn't)—your feedback helps me improve. Please write to me at:", bundle: .module)
     }
     public static var feedbackAppreciation: String {
-        NSLocalizedString("feedback.appreciation", bundle: .module, comment: "")
+        String(localized: "Thank you for helping me improve! ❤️", bundle: .module)
     }
     public static var feedbackSignature: String = "Grace"
 
