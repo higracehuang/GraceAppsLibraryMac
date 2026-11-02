@@ -105,6 +105,16 @@ final class GraceAppsLibraryMacTests: XCTestCase {
         XCTAssertFalse(manager.hasPromptYet())
     }
 
+    func testReviewManagerFeedbackURL() {
+        guard let url = ReviewPromptManager.getFeedbackMailURL() else {
+            XCTFail("getFeedbackMailURL should return a valid URL")
+            return
+        }
+        XCTAssertEqual(url.scheme, "mailto")
+        XCTAssertTrue(url.absoluteString.contains("higracehuang@gmail.com"))
+        XCTAssertTrue(url.absoluteString.contains("Feedback:"))
+    }
+
     func testFeedbackToGraceViewDefaultsAndURL() {
         XCTAssertEqual(FeedbackToGraceView.feedbackEmail, "higracehuang@gmail.com")
         XCTAssertFalse(FeedbackToGraceView.feedbackMessage.isEmpty)

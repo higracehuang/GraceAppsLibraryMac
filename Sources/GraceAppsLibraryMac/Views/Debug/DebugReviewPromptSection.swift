@@ -36,6 +36,12 @@ public struct DebugReviewPromptSection: View {
                 }
             }
 
+            LabeledContent("Feedback prompt") {
+                Button("Present Help Us Improve Alert…") {
+                    ReviewPromptManager.promptFeedbackAlert()
+                }
+            }
+
             LabeledContent("Review state") {
                 Button("Reset Review State") {
                     ReviewPromptManager.shared.debugResetReviewState()

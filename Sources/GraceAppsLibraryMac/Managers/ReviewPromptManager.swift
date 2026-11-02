@@ -192,8 +192,35 @@ public final class ReviewPromptManager {
         if alert.runModal() == .alertFirstButtonReturn {
             onPositive()
         } else {
-            onNegative?()
+            if let onNegative {
+                onNegative()
+            } else {
+                Self.promptFeedbackAlert()
+            }
         }
+    }
+
+    /// Prompts a polite follow-up alert asking if the user would like to share feedback,
+    /// and opens their default email client with a pre-filled feedback template if confirmed.
+    @discardableResult
+    public static func promptFeedbackAlert(
+        title: String = "Help Us Improve",
+        message: String = "Would you like to send feedback or report an issue directly to the developer?",
+        sendButtonTitle: String = "Send Feedback",
+        cancelButtonTitle: String = "Not Now"
+    ) -> Bool {
+        let alert = NSAlert()
+        alert.messageText = title
+        alert.informativeText = message
+        alert.addButton(withTitle: sendButtonTitle)
+        alert.addButton(withTitle: cancelButtonTitle)
+        if alert.runModal() == .alertFirstButtonReturn {
+            if let url = getFeedbackMailURL() {
+                NSWorkspace.shared.open(url)
+                return true
+            }
+        }
+        return false
     }
 
     private func showNativeReviewPrompt() {
